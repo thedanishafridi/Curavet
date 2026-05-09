@@ -58,7 +58,7 @@ export async function runSeed() {
         goalAmount,
         raisedAmount,
         location: city,
-        status: 'open',
+        status: 'active',
         ownerId: vet._id,
         images: [`https://loremflickr.com/800/600/${animal.type}?lock=${i + 100}`],
         isApproved: true,

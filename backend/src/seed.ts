@@ -63,6 +63,8 @@ export async function seedAll() {
         goalAmount: 300,
         ownerId: vetUser._id,
         images: [],
+        status: 'active',
+        isApproved: true,
       },
     ]
 

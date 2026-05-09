@@ -8,7 +8,8 @@ const caseSchema = new mongoose.Schema(
     location: { type: String, required: true },
     goalAmount: { type: Number, required: true },
     raisedAmount: { type: Number, default: 0 },
-    status: { type: String, enum: ['open', 'closed', 'recovered'], default: 'open' },
+    status: { type: String, enum: ['pending', 'active', 'rejected', 'closed'], default: 'pending' },
+    isApproved: { type: Boolean, default: false },
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     images: [{ type: String }],
     // New fields from frontend form
