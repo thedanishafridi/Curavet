@@ -10,8 +10,18 @@ const connectDB = async () => {
     console.warn('⚠️ MONGO_URI not found, falling back to local database.')
   }
 
-  await mongoose.connect(mongoUri ?? 'mongodb://127.0.0.1:27017/CuraVet_Local')
-  console.log('Connected to MongoDB successfully.')
+  try {
+    await mongoose.connect(mongoUri ?? 'mongodb://127.0.0.1:27017/CuraVet_Local')
+    console.log('Connected to MongoDB successfully.')
+  } catch (err) {
+    if (mongoUri) {
+      console.warn('⚠️ Atlas connection failed. Falling back to local database...')
+      await mongoose.connect('mongodb://127.0.0.1:27017/CuraVet_Local')
+      console.log('Connected to Local MongoDB successfully.')
+    } else {
+      throw err
+    }
+  }
 }
 
 export default connectDB

@@ -40,3 +40,6 @@
 [2026-05-09T14:50:00Z] | FIXED | /Curavet/frontend | Hardened AdminLogin to enforce 'admin' role and prevent Vets from accessing the admin portal.
 [2026-05-09T14:50:00Z] | FIXED | /Curavet/frontend | Modified api.ts interceptor to prevent accidental redirects to /login on failed login attempts.
 [2026-05-09T14:50:00Z] | VERIFIED | /Curavet | Admin credentials (admin@curavet.com / admin123) verified via internal test script.
+[2026-05-09T15:30:00Z] | FIXED | /Curavet/backend | Added 'dotenv' to seed.ts to ensure environment variables are loaded during seeding.
+[2026-05-09T15:30:00Z] | FIXED | /Curavet/backend | Implemented automatic DB fallback in db.ts to gracefully switch from Atlas to Local on failure.
+[2026-05-09T15:30:00Z] | VERIFIED | /Curavet | Re-seeded database; confirmed both seeder and app are now synchronized on the local MongoDB instance.

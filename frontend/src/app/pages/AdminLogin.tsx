@@ -4,12 +4,20 @@ import { useAuth } from '../context/AuthContext';
 import { Shield, Eye, EyeOff, Lock, Mail, AlertTriangle } from 'lucide-react';
 
 export function AdminLogin() {
-  const { login, logout } = useAuth();
+  const { user, login, logout, isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Security: If already logged in as a non-admin, kick them out
+  useEffect(() => {
+    if (isLoggedIn && user && user.role !== 'admin') {
+      logout();
+      setError('Access Denied: You were logged in with a non-admin account.');
+    }
+  }, [isLoggedIn, user, logout]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
