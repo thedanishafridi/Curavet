@@ -25,62 +25,47 @@ const animalData = [
 const cities = ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad'];
 const urgencies = ['critical', 'high', 'medium', 'low', 'stable'];
 
-async function seed() {
-  try {
-    await mongoose.connect(MONGO_URI);
-    console.log('Connected to MongoDB');
-
-    const vet = await User.findOne({ role: 'vet' });
-    if (!vet) {
-      console.error('No vet user found. Run user seed first.');
-      process.exit(1);
-    }
-
-    // Clear existing cases
-    await Case.deleteMany({});
-    console.log('Cleared existing cases');
-
-    const cases = [];
-
-    // Create 10 cases for each type to ensure full testing
-    for (const animal of animalData) {
-      for (let i = 0; i < 10; i++) {
-        const title = `${animal.titles[i % animal.titles.length]} - ${animal.breed} #${i + 1}`;
-        const goalAmount = Math.floor(Math.random() * 150000) + 10000;
-        const raisedAmount = Math.floor(Math.random() * (goalAmount * 0.8));
-        const urgency = urgencies[Math.floor(Math.random() * urgencies.length)];
-        const city = cities[Math.floor(Math.random() * cities.length)];
-
-        cases.push({
-          title,
-          petName: `Pet${i + 1}`,
-          petBreed: animal.breed,
-          petAge: Math.floor(Math.random() * 10) + 1,
-          petType: animal.type.charAt(0).toUpperCase() + animal.type.slice(1),
-          urgency,
-          medicalHistory: 'Previously healthy. Rescued from the street.',
-          description: `This ${animal.type} is in urgent need of ${title.toLowerCase()}. We need funds to cover the surgery and post-op care.`,
-          diagnosis: `Clinical examination revealed ${animal.titles[i % animal.titles.length].toLowerCase()}.`,
-          treatmentPlan: 'Immediate surgery followed by 2 weeks of antibiotic treatment and rehabilitation.',
-          goalAmount,
-          raisedAmount,
-          location: city,
-          status: 'active',
-          vetId: vet._id,
-          images: [`https://loremflickr.com/800/600/${animal.type}?lock=${i + 100}`],
-          isApproved: true,
-        });
-      }
-    }
-
-    await Case.insertMany(cases);
-    console.log(`Successfully seeded ${cases.length} diverse cases!`);
-
-    process.exit(0);
-  } catch (error) {
-    console.error('Seeding failed:', error);
-    process.exit(1);
+export async function runSeed() {
+  const vet = await User.findOne({ role: 'vet' });
+  if (!vet) {
+    throw new Error('No vet user found. Please ensure users are seeded first.');
   }
-}
 
-seed();
+  // Clear existing cases
+  await Case.deleteMany({});
+  
+  const cases = [];
+  // Create 10 cases for each type to ensure full testing
+  for (const animal of animalData) {
+    for (let i = 0; i < 10; i++) {
+      const title = `${animal.titles[i % animal.titles.length]} - ${animal.breed} #${i + 1}`;
+      const goalAmount = Math.floor(Math.random() * 150000) + 10000;
+      const raisedAmount = Math.floor(Math.random() * (goalAmount * 0.8));
+      const urgency = urgencies[Math.floor(Math.random() * urgencies.length)];
+      const city = cities[Math.floor(Math.random() * cities.length)];
+
+      cases.push({
+        title,
+        petName: `Pet${i + 1}`,
+        petBreed: animal.breed,
+        petAge: Math.floor(Math.random() * 10) + 1,
+        petType: animal.type.charAt(0).toUpperCase() + animal.type.slice(1),
+        urgency,
+        medicalHistory: 'Previously healthy. Rescued from the street.',
+        description: `This ${animal.type} is in urgent need of ${title.toLowerCase()}. We need funds to cover the surgery and post-op care.`,
+        diagnosis: `Clinical examination revealed ${animal.titles[i % animal.titles.length].toLowerCase()}.`,
+        treatmentPlan: 'Immediate surgery followed by 2 weeks of antibiotic treatment and rehabilitation.',
+        goalAmount,
+        raisedAmount,
+        location: city,
+        status: 'active',
+        vetId: vet._id,
+        images: [`https://loremflickr.com/800/600/${animal.type}?lock=${i + 100}`],
+        isApproved: true,
+      });
+    }
+  }
+
+  await Case.insertMany(cases);
+  return cases.length;
+}

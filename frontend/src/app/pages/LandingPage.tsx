@@ -7,6 +7,12 @@ import { Heart, ShieldCheck, TrendingUp, Clock, ArrowRight, Star, CheckCircle2 }
 
 export function LandingPage() {
   const [featuredCases, setFeaturedCases] = useState<any[]>([]);
+  const [stats, setStats] = useState([
+    { label: 'Animals Helped', value: '0', icon: Heart, color: 'text-pink-500', bg: 'bg-pink-50', key: 'animalsHelped' },
+    { label: 'Verified Clinics', value: '0', icon: ShieldCheck, color: 'text-emerald-500', bg: 'bg-emerald-50', key: 'verifiedClinics' },
+    { label: 'PKR Raised', value: '0', icon: TrendingUp, color: 'text-blue-500', bg: 'bg-blue-50', key: 'totalRaised' },
+    { label: 'Success Rate', value: '94%', icon: Star, color: 'text-amber-500', bg: 'bg-amber-50', key: 'successRate' },
+  ]);
 
   useEffect(() => {
     const fetchCases = async () => {
@@ -19,15 +25,28 @@ export function LandingPage() {
         console.error('Failed to fetch cases:', err);
       }
     };
-    fetchCases();
-  }, []);
 
-  const stats = [
-    { label: 'Animals Helped', value: '2,841', icon: Heart, color: 'text-pink-500', bg: 'bg-pink-50' },
-    { label: 'Verified Clinics', value: '143', icon: ShieldCheck, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { label: 'PKR Raised', value: '48.5L+', icon: TrendingUp, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { label: 'Success Rate', value: '94%', icon: Star, color: 'text-amber-500', bg: 'bg-amber-50' },
-  ];
+    const fetchStats = async () => {
+      try {
+        const { data } = await api.get('/stats');
+        setStats(prev => prev.map(s => {
+          if (s.key === 'animalsHelped') return { ...s, value: data.animalsHelped.toLocaleString() };
+          if (s.key === 'verifiedClinics') return { ...s, value: data.verifiedClinics.toLocaleString() };
+          if (s.key === 'totalRaised') {
+            const val = data.totalRaised;
+            const formatted = val >= 100000 ? `${(val / 100000).toFixed(1)}L+` : `${(val / 1000).toFixed(0)}k+`;
+            return { ...s, value: formatted };
+          }
+          return s;
+        }));
+      } catch (err) {
+        console.error('Failed to fetch stats:', err);
+      }
+    };
+
+    fetchCases();
+    fetchStats();
+  }, []);
 
   const howItWorks = [
     { step: '01', title: 'Browse Cases', desc: 'Discover animals in need at verified clinics across Pakistan.' },
