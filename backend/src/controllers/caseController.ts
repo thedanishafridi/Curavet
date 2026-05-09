@@ -8,11 +8,11 @@ export const getCases = async (req: Request, res: Response) => {
 }
 
 export const getCaseById = async (req: Request, res: Response) => {
-  const existing = await Case.findById(req.params.id)
+  const existing = await Case.findById(req.params.id).populate('ownerId', 'name email role clinicName clinicAddress');
   if (!existing) {
     return res.status(404).json({ message: 'Case not found' })
   }
-  res.json(existing)
+  res.json({ case: existing })
 }
 
 export const getMyCases = async (req: AuthRequest, res: Response) => {

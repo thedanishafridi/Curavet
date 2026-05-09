@@ -28,7 +28,7 @@ export function CaseDetail() {
     const fetchCase = async () => {
       try {
         const response = await api.get(`/cases/${id}`);
-        setCase(response.data.case);
+        setCase(response.data.case || response.data);
       } catch (err) {
         console.error('Failed to fetch case:', err);
         toast.error('Unable to load case details');
@@ -156,7 +156,7 @@ export function CaseDetail() {
               <div className="flex flex-wrap gap-4 text-sm text-gray-500">
                 <span className="flex items-center gap-1.5">
                    <Heart size={14} className="text-pink-500" />
-                  {case_.petName} · {case_.petBreed || case_.breed || 'Unknown Breed'} · {case_.petAge || case_.age || 'Unknown'} years
+                  {case_.petName} · {case_.petBreed || case_.petType || 'Patient'} · {case_.petAge || 'Young'} years
                 </span>
                 <span className="flex items-center gap-1.5">
                   <MapPin size={14} />
@@ -263,13 +263,13 @@ export function CaseDetail() {
                 <div className="flex items-center gap-2">
                   <ShieldCheck size={16} className="text-emerald-600 flex-shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-emerald-800 truncate">{case_.vetId?.name || 'Verified Vet'}</p>
-                    <p className="text-xs text-emerald-600 truncate">{case_.location || 'Verified Clinic'}</p>
+                    <p className="text-xs font-semibold text-emerald-800 truncate">{case_.ownerId?.name || case_.vetId?.name || 'Verified Vet'}</p>
+                    <p className="text-xs text-emerald-600 truncate">{case_.ownerId?.clinicName || case_.location || 'Verified Clinic'}</p>
                   </div>
                 </div>
               </div>
 
-              {case_.status === 'active' ? (
+              {(case_.status === 'active' || case_.status === 'open') ? (
                 <>
                   <Link
                     to={`/donate/${case_._id}`}

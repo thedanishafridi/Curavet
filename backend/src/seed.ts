@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 import User from './models/User.js'
 import Case from './models/Case.js'
+import Recovery from './models/Recovery.js'
 import connectDB from './config/db.js'
 
 export async function seedAll() {
@@ -77,9 +78,25 @@ export async function seedAll() {
         console.log(`Case already exists: ${caseData.title}`)
       }
     }
+    // Seed sample recoveries for the feed
+    const allCases = await Case.find().limit(2);
+    for (const c of allCases) {
+      const existingRecovery = await Recovery.findOne({ caseId: c._id });
+      if (!existingRecovery) {
+        await Recovery.create({
+          caseId: c._id,
+          vetId: c.ownerId,
+          notes: `Amazing progress! ${c.title} is recovering well and will be ready for adoption soon.`,
+          status: 'completed',
+          afterImageUrl: 'https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&q=80&w=800'
+        });
+        console.log(`Created recovery for: ${c.title}`);
+      }
+    }
   }
 
   console.log('Seeding completed')
+
   return userCount;
 }
 

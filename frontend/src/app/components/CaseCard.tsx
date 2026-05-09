@@ -25,11 +25,11 @@ const URGENCY_CONFIG: Record<string, { bg: string; text: string; label: string }
 
 export function CaseCard({ case_, showActions, onApprove, onReject }: CaseCardProps) {
   const progress = (case_.goalAmount && case_.goalAmount > 0) ? Math.min(((case_.raisedAmount || 0) / case_.goalAmount) * 100, 100) : 0;
-  const status = STATUS_CONFIG[case_.status] || STATUS_CONFIG['pending'];
+  const status = STATUS_CONFIG[case_.status] || (case_.status === 'open' ? STATUS_CONFIG['active'] : STATUS_CONFIG['pending']);
   const urgency = URGENCY_CONFIG[case_.urgency] || URGENCY_CONFIG['stable'];
 
   const progressBarColor =
-    case_.status === 'active' ? 'bg-emerald-500' :
+    (case_.status === 'active' || case_.status === 'open') ? 'bg-emerald-500' :
     case_.status === 'closed' ? 'bg-blue-500' :
     case_.status === 'rejected' ? 'bg-red-400' : 'bg-yellow-400';
 
@@ -38,7 +38,7 @@ export function CaseCard({ case_, showActions, onApprove, onReject }: CaseCardPr
       {/* Pet Image */}
       <div className="relative h-48 overflow-hidden bg-gray-100 flex-shrink-0">
         <img
-          src={case_.image || '/placeholder-pet.jpg'}
+          src={case_.images?.[0] || case_.image || '/placeholder-pet.jpg'}
           alt={case_.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
