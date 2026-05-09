@@ -8,7 +8,9 @@ const seedUsers = async () => {
   await connectDB()
 
   const users = [
-    { name: 'Admin User', email: 'admin@curavet.com', password: 'admin123', role: 'admin' },
+    { name: 'Admin One', email: 'admin@curavet.com', password: 'admin123', role: 'admin' },
+    { name: 'Admin Two', email: 'admin2@curavet.com', password: 'admin123', role: 'admin' },
+    { name: 'Admin Three', email: 'admin3@curavet.com', password: 'admin123', role: 'admin' },
     { name: 'Vet User', email: 'vet@curavet.com', password: 'vet123', role: 'vet' },
     { name: 'Donor User', email: 'donor@curavet.com', password: 'donor123', role: 'donor' },
   ]
