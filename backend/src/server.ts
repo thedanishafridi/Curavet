@@ -48,7 +48,7 @@ app.get('/api/stats', async (req, res) => {
   try {
     const totalDonations = await Donation.find();
     const totalRaised = totalDonations.reduce((sum, d) => sum + (d.amount || 0), 0);
-    const activeCases = await Case.countDocuments({ status: 'active' });
+    const activeCases = await Case.countDocuments({ status: { $in: ['active', 'open'] } });
     const verifiedClinics = await User.countDocuments({ role: 'vet', isApproved: true });
     
     res.json({
@@ -65,6 +65,9 @@ app.get('/api/stats', async (req, res) => {
 // Temporary Seed Trigger for Production
 app.get('/api/admin/seed-now', async (req, res) => {
   try {
+    // Migrate legacy 'open' status cases to 'active'
+    await Case.updateMany({ status: 'open' }, { status: 'active' });
+
     const userCount = await seedAll();
     const caseCount = await runSeed();
     res.json({ message: 'Seeding successful!', users: userCount, cases: caseCount });

@@ -78,12 +78,16 @@ export function AdminCaseManagement() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open':
-        return 'bg-blue-100 text-blue-700'
-      case 'closed':
-        return 'bg-yellow-100 text-yellow-700'
-      case 'recovered':
+      case 'active':
         return 'bg-emerald-100 text-emerald-700'
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-700'
+      case 'closed':
+        return 'bg-blue-100 text-blue-700'
+      case 'recovered':
+        return 'bg-purple-100 text-purple-700'
+      case 'rejected':
+        return 'bg-red-100 text-red-700'
       default:
         return 'bg-gray-100 text-gray-700'
     }
@@ -170,9 +174,11 @@ export function AdminCaseManagement() {
                             caseItem.status
                           )}`}
                         >
-                          <option value="open">Open</option>
+                          <option value="pending">Pending</option>
+                          <option value="active">Active</option>
                           <option value="closed">Closed</option>
                           <option value="recovered">Recovered</option>
+                          <option value="rejected">Rejected</option>
                         </select>
                       </td>
                       <td className="px-6 py-4 text-right">

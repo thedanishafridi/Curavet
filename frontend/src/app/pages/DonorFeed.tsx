@@ -18,7 +18,7 @@ export function DonorFeed() {
     const fetchCases = async () => {
       try {
         const { data } = await api.get('/cases');
-        setCases(data.cases || []);
+        setCases(data || []);
       } catch (err) {
         console.error('Failed to fetch cases', err);
         toast.error('Unable to load healing opportunities');
@@ -44,13 +44,13 @@ export function DonorFeed() {
   };
 
   const filteredCases = (cases || []).filter(c => {
-    if (c.status !== 'active') return false;
+    if (c.status !== 'active' && c.status !== 'open') return false;
     const matchSearch =
       (c.petName || '').toLowerCase().includes(search.toLowerCase()) ||
       (c.title || '').toLowerCase().includes(search.toLowerCase()) ||
       (c.location || '').toLowerCase().includes(search.toLowerCase());
     const matchUrgency = selectedUrgency === 'All' || c.urgency === selectedUrgency;
-    const matchAnimal = selectedAnimals.length === 0 || selectedAnimals.includes(c.animalType);
+    const matchAnimal = selectedAnimals.length === 0 || selectedAnimals.includes(c.petType);
     return matchSearch && matchUrgency && matchAnimal;
   });
 
