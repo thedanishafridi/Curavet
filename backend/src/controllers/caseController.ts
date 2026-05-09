@@ -86,10 +86,13 @@ export const updateCaseStatus = async (req: AuthRequest, res: Response) => {
     return res.status(404).json({ message: 'Case not found' })
   }
   const { status } = req.body
-  if (!['open', 'closed', 'recovered'].includes(status)) {
+  if (!['pending', 'active', 'rejected', 'closed', 'recovered'].includes(status)) {
     return res.status(400).json({ message: 'Invalid status' })
   }
   existing.status = status
+  if (status === 'active') {
+    existing.isApproved = true
+  }
   await existing.save()
   res.json(existing)
 }
