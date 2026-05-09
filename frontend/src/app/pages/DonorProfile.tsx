@@ -36,6 +36,9 @@ export function DonorProfile() {
 
   const [settingsSaved, setSettingsSaved] = useState(false);
 
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const avatarRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const fetchDonations = async () => {
       try {
@@ -49,6 +52,27 @@ export function DonorProfile() {
     };
     fetchDonations();
   }, []);
+
+  const handleAvatarUpload = async (file: File) => {
+    setAvatarLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('images', file);
+      const { data } = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      const avatarUrl = data.urls[0];
+      await api.patch('/auth/profile', { avatarUrl });
+      toast.success('Profile picture updated!');
+      // Note: In a real app, we'd update the context user here
+      window.location.reload(); 
+    } catch (err) {
+      toast.error('Failed to upload image');
+    } finally {
+      setAvatarLoading(false);
+    }
+  };
 
   const toggleNotification = (id: string) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, enabled: !n.enabled } : n));
@@ -79,12 +103,31 @@ export function DonorProfile() {
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
             <div className="relative">
-              <div className="w-20 h-20 rounded-2xl bg-emerald-100 flex items-center justify-center overflow-hidden">
-                <span className="text-emerald-600 font-bold text-3xl">{user?.name?.charAt(0) || 'U'}</span>
+              <div className="w-20 h-20 rounded-2xl bg-emerald-100 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm">
+                {user?.avatarUrl ? (
+                  <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-emerald-600 font-bold text-3xl">{user?.name?.charAt(0) || 'U'}</span>
+                )}
+                {avatarLoading && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  </div>
+                )}
               </div>
-              <button onClick={() => toast.info('Avatar upload coming soon')} className="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-600 text-white rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors shadow-sm">
+              <button 
+                onClick={() => avatarRef.current?.click()} 
+                className="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-600 text-white rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors shadow-sm"
+              >
                 <Camera size={12} />
               </button>
+              <input 
+                ref={avatarRef}
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={(e) => e.target.files?.[0] && handleAvatarUpload(e.target.files[0])}
+              />
             </div>
             <div className="text-center sm:text-left flex-1">
               <h1 className="text-xl font-black text-gray-900">{user?.name}</h1>

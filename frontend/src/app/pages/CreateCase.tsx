@@ -85,8 +85,11 @@ export function CreateCase() {
     } catch (err: any) {
       console.error(err);
       const msg = err.response?.data?.message || 'Failed to create case';
-      setError(msg);
-      toast.error(msg);
+      const details = err.response?.data?.errors;
+      const errorText = details ? `${msg}: ${Object.values(details).join(', ')}` : msg;
+      
+      setError(errorText);
+      toast.error(errorText);
     } finally {
       setLoading(false);
     }

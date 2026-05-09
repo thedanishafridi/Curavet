@@ -13,6 +13,29 @@ export function VetProfile() {
   const [newDoc, setNewDoc] = useState<File | null>(null);
   const docRef = useRef<HTMLInputElement>(null);
 
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const avatarRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarUpload = async (file: File) => {
+    setAvatarLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('images', file);
+      const { data } = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      
+      const avatarUrl = data.urls[0];
+      await api.patch('/auth/profile', { avatarUrl });
+      toast.success('Profile picture updated!');
+      window.location.reload(); 
+    } catch (err) {
+      toast.error('Failed to upload image');
+    } finally {
+      setAvatarLoading(false);
+    }
+  };
+
   const vetInfo = {
     clinic_name: user?.clinicName || 'Not Specified',
     vet_name: user?.name || 'Doctor',
@@ -96,8 +119,32 @@ export function VetProfile() {
           {/* Profile Header Card */}
           <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6">
             <div className="flex items-center gap-6">
-              <div className="w-20 h-20 bg-emerald-100 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-inner">
-                <span className="text-emerald-700 font-black text-2xl">{vetInfo.vet_name.charAt(0)}</span>
+              <div className="relative group">
+                <div className="w-20 h-20 bg-emerald-100 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-inner overflow-hidden border-2 border-white">
+                  {user?.avatarUrl ? (
+                    <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-emerald-700 font-black text-2xl">{vetInfo.vet_name.charAt(0)}</span>
+                  )}
+                  {avatarLoading && (
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    </div>
+                  )}
+                </div>
+                <button 
+                  onClick={() => avatarRef.current?.click()}
+                  className="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-600 text-white rounded-full flex items-center justify-center hover:bg-emerald-700 transition-colors shadow-sm"
+                >
+                  <Camera size={12} />
+                </button>
+                <input 
+                  ref={avatarRef}
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={(e) => e.target.files?.[0] && handleAvatarUpload(e.target.files[0])}
+                />
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-2xl font-black text-gray-900 truncate">{vetInfo.vet_name}</h2>

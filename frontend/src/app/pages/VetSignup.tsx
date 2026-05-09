@@ -100,18 +100,17 @@ export function VetSignup() {
     setLoading(true);
     setError('');
     try {
-      // 1. Register the user
-      const registerRes = await api.post('/auth/register', {
+      // 1. Register the user with all metadata
+      await register({
         name: form.vetName,
         email: form.email,
         password: form.password,
-        role: 'vet'
+        role: 'vet',
+        clinicName: form.clinicName,
+        clinicAddress: form.city,
+        licenseNumber: form.licenseNumber,
+        phone: form.phone
       });
-
-      // Save token for document uploads
-      if (registerRes.data.token) {
-        localStorage.setItem('curavet_token', registerRes.data.token);
-      }
 
       // 2. Upload documents if selected
       let licenseUrl = '';
@@ -135,7 +134,7 @@ export function VetSignup() {
         if (res.data.urls?.length) regCertUrl = res.data.urls[0];
       }
 
-      // 3. Submit application details
+      // 3. Submit application details for admin review
       await api.post('/vet-applications', {
         clinicName: form.clinicName,
         clinicAddress: form.city,

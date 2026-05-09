@@ -90,6 +90,21 @@ export function DonorSignup() {
         <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-emerald-900/5 border border-gray-100 p-10 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-600/5 rounded-full -mr-16 -mt-16" />
 
+          <div className="bg-gray-50 rounded-2xl p-1.5 mb-8 flex border border-gray-100 shadow-inner">
+            <button
+              type="button"
+              className="flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+            >
+              Donor
+            </button>
+            <Link
+              to="/vet/signup"
+              className="flex-1 py-3 px-4 rounded-xl text-xs font-black uppercase tracking-widest transition-all text-gray-400 hover:text-gray-600 text-center"
+            >
+              Clinic
+            </Link>
+          </div>
+
           <h1 className="text-2xl font-black text-gray-900 tracking-tight mb-1">Create Account</h1>
           <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mb-8">Start your donor journey</p>
 

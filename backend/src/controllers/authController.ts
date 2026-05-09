@@ -7,7 +7,7 @@ import { sendEmail } from '../services/mailer.js'
 const jwtSecret = process.env.JWT_SECRET ?? 'curavet_local_secret'
 
 export const registerUser = async (req: Request, res: Response) => {
-  const { name, email, password, role } = req.body
+  const { name, email, password, role, ...extra } = req.body
   if (!name || !email || !password) {
     return res.status(400).json({ message: 'Name, email, and password are required' })
   }
@@ -17,15 +17,17 @@ export const registerUser = async (req: Request, res: Response) => {
   }
 
   const passwordHash = await bcrypt.hash(password, 10)
-  const user = await User.create({ name, email, passwordHash, role: role ?? 'donor' })
+  const user = await User.create({ name, email, passwordHash, role: role ?? 'donor', ...extra })
   const token = jwt.sign({ id: user._id.toString(), role: user.role }, jwtSecret, { expiresIn: '7d' })
+  
+  const userObj = user.toObject()
+  delete userObj.passwordHash
+
   res.status(201).json({ 
     token, 
     user: { 
-      id: user._id.toString(), 
-      name: user.name, 
-      email: user.email, 
-      role: user.role,
+      ...userObj,
+      id: user._id.toString(),
       verified: true
     } 
   })
@@ -54,14 +56,16 @@ export const loginUser = async (req: Request, res: Response) => {
 
   console.log(`[AUTH] Login successful: ${email} (${user.role})`)
   const token = jwt.sign({ id: user._id.toString(), role: user.role }, jwtSecret, { expiresIn: '7d' })
+  
+  const userObj = user.toObject()
+  delete userObj.passwordHash
+
   res.json({ 
     token, 
     user: { 
-      id: user._id.toString(), 
-      name: user.name, 
-      email: user.email, 
-      role: user.role,
-      verified: true // Default to true for now to allow login
+      ...userObj,
+      id: user._id.toString(),
+      verified: true
     } 
   })
 }
@@ -103,6 +107,30 @@ export const changePassword = async (req: Request, res: Response) => {
   res.json({ message: 'Password changed successfully' })
 }
 
+
+export const updateProfile = async (req: Request, res: Response) => {
+  const authReq = req as unknown as { user?: { id: string } }
+  if (!authReq.user?.id) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+  
+  const { name, avatarUrl } = req.body
+  const user = await User.findById(authReq.user.id)
+  
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' })
+  }
+
+  if (name) user.name = name
+  if (avatarUrl) user.avatarUrl = avatarUrl
+  
+  await user.save()
+  
+  const userObj = user.toObject()
+  delete userObj.passwordHash
+  
+  res.json(userObj)
+}
 
 export const forgotPassword = async (req: Request, res: Response) => {
   const { email } = req.body

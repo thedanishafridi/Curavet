@@ -47,7 +47,7 @@ function DashboardRedirect() {
   const { role } = useAuth();
 
   if (role === 'donor') {
-    return <Navigate to="/browse" replace />;
+    return <Navigate to="/profile" replace />;
   }
 
   if (role === 'vet' || role === 'clinic') {

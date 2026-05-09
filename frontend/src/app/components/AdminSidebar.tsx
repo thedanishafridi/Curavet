@@ -33,7 +33,7 @@ export function AdminSidebar({ role = 'admin' }: SidebarProps) {
     { to: '/vet/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { to: '/vet/create-case', icon: PlusCircle, label: 'New Case' },
     { to: '/vet/recovery-upload', icon: Upload, label: 'Recovery Update' },
-    { to: '/vet/profile', icon: UserCircle, label: 'Profile' },
+    { to: '/browse', icon: FolderOpen, label: 'Community Feed' },
   ];
 
   const links = role === 'admin' ? adminLinks : vetLinks;

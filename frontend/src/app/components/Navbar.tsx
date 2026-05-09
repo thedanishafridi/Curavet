@@ -46,7 +46,7 @@ export function Navbar() {
 
   const getDashboardPath = () => {
     if (!role) return '/browse';
-    if (role === 'donor') return '/browse';
+    if (role === 'donor') return '/profile';
     if (role === 'vet' || role === 'clinic') return '/vet/dashboard';
     if (role === 'admin') return '/admin/dashboard';
     return '/browse';

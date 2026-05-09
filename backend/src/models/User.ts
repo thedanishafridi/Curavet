@@ -6,6 +6,12 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     passwordHash: { type: String, required: true },
     role: { type: String, enum: ['donor', 'vet', 'admin'], default: 'donor' },
+    phone: { type: String },
+    clinicName: { type: String },
+    clinicAddress: { type: String },
+    licenseNumber: { type: String },
+    avatarUrl: { type: String },
+    isApproved: { type: Boolean, default: true },
   },
   { timestamps: true },
 )

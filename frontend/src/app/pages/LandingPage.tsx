@@ -67,10 +67,10 @@ export function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                to="/browse"
+                to="/signup"
                 className="inline-flex items-center justify-center gap-2 bg-emerald-400 text-emerald-900 font-bold px-8 py-4 rounded-2xl hover:bg-emerald-300 transition-all shadow-lg shadow-emerald-900/30 text-base"
               >
-                Browse Cases <ArrowRight size={18} />
+                Get Started <ArrowRight size={18} />
               </Link>
               <Link
                 to="/vet/signup"
