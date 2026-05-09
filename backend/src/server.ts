@@ -14,6 +14,11 @@ import vetApplicationRouter from './routes/vetApplication.js'
 import uploadRouter from './routes/upload.js'
 import connectDB from './config/db.js'
 import { errorHandler } from './middleware/errorHandler.js'
+import User from './models/User.js'
+import Case from './models/Case.js'
+import Donation from './models/Donation.js'
+import { runSeed } from './seed_production.js'
+import { seedAll } from './seed.js'
 
 const app = express()
 const port = Number(process.env.PORT ?? 5001)
@@ -34,11 +39,6 @@ app.use('/api/recovery', recoveryRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/vet-applications', vetApplicationRouter)
 app.use('/api/upload', uploadRouter)
-
-import User from './models/User.js';
-import Case from './models/Case.js';
-import Donation from './models/Donation.js';
-import { runSeed } from './seed_production.js';
 
 // Serve uploaded images as static files
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')))
@@ -65,8 +65,9 @@ app.get('/api/stats', async (req, res) => {
 // Temporary Seed Trigger for Production
 app.get('/api/admin/seed-now', async (req, res) => {
   try {
-    const count = await runSeed();
-    res.json({ message: 'Seeding successful!', count });
+    const userCount = await seedAll();
+    const caseCount = await runSeed();
+    res.json({ message: 'Seeding successful!', users: userCount, cases: caseCount });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

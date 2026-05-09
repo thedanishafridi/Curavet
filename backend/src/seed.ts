@@ -5,7 +5,7 @@ import User from './models/User.js'
 import Case from './models/Case.js'
 import connectDB from './config/db.js'
 
-const seedUsers = async () => {
+export async function seedAll() {
   await connectDB()
 
   const users = [
@@ -16,17 +16,20 @@ const seedUsers = async () => {
     { name: 'Donor User', email: 'donor@curavet.com', password: 'donor123', role: 'donor' },
   ]
 
+  let userCount = 0;
   for (const userData of users) {
     const existing = await User.findOne({ email: userData.email })
     const passwordHash = await bcrypt.hash(userData.password, 10)
     if (!existing) {
       await User.create({ ...userData, passwordHash })
       console.log(`Created user: ${userData.email}`)
+      userCount++;
     } else {
       existing.passwordHash = passwordHash
       existing.role = userData.role
       await existing.save()
       console.log(`Updated existing user: ${userData.email}`)
+      userCount++;
     }
   }
 
@@ -75,7 +78,13 @@ const seedUsers = async () => {
   }
 
   console.log('Seeding completed')
-  process.exit(0)
+  return userCount;
 }
 
-seedUsers().catch(console.error)
+// Support direct execution too
+if (process.argv && process.argv[1] && process.argv[1].endsWith('seed.ts')) {
+  seedAll().then(() => process.exit(0)).catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+}
