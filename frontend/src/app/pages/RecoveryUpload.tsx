@@ -27,10 +27,10 @@ export function RecoveryUpload() {
   useEffect(() => {
     const fetchMyCases = async () => {
       try {
-        const response = await api.get('/cases');
-        // Filter cases for the current vet
-        // Note: In production, there would be a dedicated endpoint for this
-        setActiveCases(response.data.cases || []);
+        const response = await api.get('/cases/my');
+        const allMyCases = response.data.cases || [];
+        // Only show active cases for recovery updates
+        setActiveCases(allMyCases.filter((c: any) => c.status === 'active' || c.status === 'open'));
       } catch (err) {
         console.error('Failed to fetch cases:', err);
       } finally {

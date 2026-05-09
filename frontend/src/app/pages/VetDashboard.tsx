@@ -22,12 +22,11 @@ export function VetDashboard() {
     const fetchData = async () => {
       try {
         const [casesRes, donationsRes] = await Promise.all([
-          api.get('/cases'),
-          api.get('/donations/my') // Note: Vets should have a way to see donations to their cases
+          api.get('/cases/my'),
+          api.get('/donations/my')
         ]);
         
-        const myCases = (casesRes.data.cases || []).filter((c: any) => c.vetId?._id === user?.id || c.vetId === user?.id);
-        setVetCases(myCases);
+        setVetCases(casesRes.data.cases || []);
         
         // In a real app, the backend would provide a /donations/clinic endpoint
         // For now, we filter or show the summary

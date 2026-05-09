@@ -32,7 +32,7 @@ export function AdminCaseManagement() {
     try {
       setLoading(true)
       const response = await api.get('/cases/admin/all')
-      setCases(response.data)
+      setCases(response.data.cases || [])
     } catch (err) {
       console.error('Failed to fetch cases:', err)
       setError('Unable to load cases.')

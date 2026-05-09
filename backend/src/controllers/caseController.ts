@@ -5,7 +5,7 @@ import { AuthRequest } from '../middleware/auth.js'
 
 export const getCases = async (req: Request, res: Response) => {
   const cases = await Case.find().sort({ createdAt: -1 })
-  res.json(cases)
+  res.json({ cases })
 }
 
 export const getCaseById = async (req: Request, res: Response) => {
@@ -21,7 +21,7 @@ export const getMyCases = async (req: AuthRequest, res: Response) => {
     return res.status(401).json({ message: 'Unauthorized' })
   }
   const cases = await Case.find({ ownerId: req.user.id }).sort({ createdAt: -1 })
-  res.json(cases)
+  res.json({ cases })
 }
 
 export const createCase = async (req: AuthRequest, res: Response) => {
@@ -74,10 +74,8 @@ export const updateCase = async (req: AuthRequest, res: Response) => {
 }
 
 export const getAdminCases = async (req: Request, res: Response) => {
-  const cases = await Case.find()
-    .populate('ownerId', 'name email role')
-    .sort({ createdAt: -1 })
-  res.json(cases)
+  const cases = await Case.find().populate('ownerId', 'name email role').sort({ createdAt: -1 })
+  res.json({ cases })
 }
 
 export const updateCaseStatus = async (req: AuthRequest, res: Response) => {

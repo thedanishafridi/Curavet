@@ -18,7 +18,7 @@ export function DonorFeed() {
     const fetchCases = async () => {
       try {
         const { data } = await api.get('/cases');
-        setCases(data || []);
+        setCases(data.cases || []);
       } catch (err) {
         console.error('Failed to fetch cases', err);
         toast.error('Unable to load healing opportunities');
