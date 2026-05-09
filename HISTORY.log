@@ -51,3 +51,4 @@
 [2026-05-09T20:42:00Z] | FIXED | /Curavet/backend | Safety Net: Implemented specific MulterError catching in errorHandler.ts to return JSON instead of crashing on large uploads.
 [2026-05-09T20:43:00Z] | VERIFIED | /Curavet | Both frontend and backend successfully built (tsc/vite) proving Architectural Zero-Defect state.
 [2026-05-09T20:50:00Z] | BRANCHED | /Curavet | Created 'security-audit-fixes' branch and pushed all architectural zero-defect remediations to git.
+[2026-05-09T21:05:00Z] | FIXED | /Curavet/backend | Synchronized updateCaseStatus with Case schema to allow 'active' and 'pending' statuses, resolving Admin Dashboard update errors.
