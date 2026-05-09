@@ -155,7 +155,7 @@ export function DonorLogin() {
                 <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest">
                   Password
                 </label>
-                <Link to="/forgot-password" size="sm" className="text-[10px] font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest">
+                <Link to="/forgot-password" title="Forgot Password" className="text-[10px] font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest">
                   Forgot?
                 </Link>
               </div>

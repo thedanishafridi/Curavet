@@ -11,6 +11,11 @@ export interface AuthUser {
   isApproved?: boolean;
   avatarUrl?: string;
   clinicName?: string;
+  phone?: string;
+  clinicAddress?: string;
+  licenseNumber?: string;
+  vetApplicationStatus?: string;
+  createdAt?: string;
 }
 
 interface AuthContextType {

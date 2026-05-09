@@ -101,6 +101,8 @@ export function DonorFeed() {
                 setSelectedCity={setSelectedCity}
                 hasFilters={hasFilters}
                 clearFilters={clearFilters}
+                search={search}
+                setSearch={setSearch}
               />
             </div>
           </div>
