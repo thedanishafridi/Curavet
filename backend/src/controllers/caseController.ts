@@ -24,18 +24,31 @@ export const getMyCases = async (req: AuthRequest, res: Response) => {
 }
 
 export const createCase = async (req: AuthRequest, res: Response) => {
-  const { title, description, category, location, goalAmount, images } = req.body
   if (!req.user) {
     return res.status(401).json({ message: 'Unauthorized' })
   }
+
+  const { 
+    title, description, category, location, goalAmount, images,
+    petName, petBreed, petAge, petType, urgency, medicalHistory, diagnosis, treatmentPlan 
+  } = req.body
+
   const newCase = await Case.create({
     title,
     description,
-    category,
+    category: category || petType || 'Medical',
     location,
     goalAmount,
     ownerId: req.user.id,
     images: images || [],
+    petName,
+    petBreed,
+    petAge,
+    petType,
+    urgency,
+    medicalHistory,
+    diagnosis,
+    treatmentPlan
   })
   res.status(201).json(newCase)
 }

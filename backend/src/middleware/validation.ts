@@ -5,10 +5,17 @@ import { Request, Response, NextFunction } from 'express';
 export const caseSchema = z.object({
   title: z.string().min(5).max(100),
   description: z.string().min(20),
-  category: z.enum(['Surgery', 'Medical Treatment', 'Rehabilitation', 'Recovery', 'Other']),
+  category: z.string().optional(),
   location: z.string().min(3),
   goalAmount: z.number().positive(),
-  petName: z.string().optional(),
+  petName: z.string().min(1),
+  petBreed: z.string().optional(),
+  petAge: z.number().optional(),
+  petType: z.string().optional(),
+  urgency: z.string().optional(),
+  medicalHistory: z.string().optional(),
+  diagnosis: z.string().optional(),
+  treatmentPlan: z.string().optional(),
   image: z.string().optional(),
   images: z.array(z.string()).optional(),
 });
@@ -25,7 +32,11 @@ export const registerSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(8),
-  role: z.enum(['admin', 'vet', 'donor']).optional(),
+  role: z.enum(['admin', 'vet', 'donor', 'clinic']).optional(),
+  clinicName: z.string().optional(),
+  clinicAddress: z.string().optional(),
+  licenseNumber: z.string().optional(),
+  phone: z.string().optional(),
 });
 
 // Middleware Factory

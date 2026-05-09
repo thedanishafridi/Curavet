@@ -83,10 +83,19 @@ export function CreateCase() {
       toast.success('Case submitted for review!');
       navigate('/vet/dashboard');
     } catch (err: any) {
-      console.error(err);
+      console.error('[CREATE_CASE_ERROR]', err);
       const msg = err.response?.data?.message || 'Failed to create case';
       const details = err.response?.data?.errors;
-      const errorText = details ? `${msg}: ${Object.values(details).join(', ')}` : msg;
+      
+      let errorText = msg;
+      if (Array.isArray(details)) {
+        // Handle Zod validation errors [{ path: ['field'], message: '...' }]
+        const fieldErrors = details.map((e: any) => `${e.path.join('.')}: ${e.message}`);
+        errorText = `${msg}: ${fieldErrors.join(', ')}`;
+      } else if (details && typeof details === 'object') {
+        // Handle object-based errors
+        errorText = `${msg}: ${Object.values(details).join(', ')}`;
+      }
       
       setError(errorText);
       toast.error(errorText);
