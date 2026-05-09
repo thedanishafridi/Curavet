@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Navbar } from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
 import { Heart, Settings, Bell, User as UserIcon, Mail, Lock, CheckCircle2, Camera } from 'lucide-react';

@@ -3,8 +3,9 @@ import { AdminSidebar } from '../components/AdminSidebar';
 import { useAuth } from '../context/AuthContext';
 import {
   Building2, MapPin, Phone, Mail, FileText, ShieldCheck, Upload,
-  CheckCircle2, Clock, X, AlertTriangle
+  CheckCircle2, Clock, X, AlertTriangle, Camera
 } from 'lucide-react';
+import api from '../../services/api';
 import { toast } from 'sonner';
 
 export function VetProfile() {
