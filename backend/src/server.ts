@@ -38,6 +38,15 @@ app.use('/api/upload', uploadRouter)
 // Serve uploaded images as static files
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')))
 
+// Temporary Seed Trigger for Production
+import { exec } from 'child_process';
+app.get('/api/admin/seed-now', (req, res) => {
+  exec('npx tsx src/seed_production.ts', (err, stdout) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Seeding triggered!', stdout });
+  });
+});
+
 app.use((req, res) => {
   res.status(404).json({ message: 'Not Found' })
 })

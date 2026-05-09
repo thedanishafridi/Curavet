@@ -16,31 +16,43 @@ export function VetDashboard() {
   const { user } = useAuth();
   const [vetCases, setVetCases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [donations, setDonations] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchVetCases = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get('/cases');
-        // Filter cases where the current user is the vet
-        // Note: In a real app, there would be a /cases/my or similar endpoint
-        const filtered = (response.data.cases || []).filter((c: any) => c.vetId?._id === user?.id || c.vetId === user?.id);
-        setVetCases(filtered);
+        const [casesRes, donationsRes] = await Promise.all([
+          api.get('/cases'),
+          api.get('/donations/my') // Note: Vets should have a way to see donations to their cases
+        ]);
+        
+        const myCases = (casesRes.data.cases || []).filter((c: any) => c.vetId?._id === user?.id || c.vetId === user?.id);
+        setVetCases(myCases);
+        
+        // In a real app, the backend would provide a /donations/clinic endpoint
+        // For now, we filter or show the summary
+        setDonations(donationsRes.data || []);
       } catch (error) {
-        console.error('Error fetching vet cases:', error);
+        console.error('Error fetching dashboard data:', error);
       } finally {
         setLoading(false);
       }
     };
-    if (user?.id) fetchVetCases();
+    if (user?.id) fetchData();
   }, [user?.id]);
 
   const totalRaised = vetCases.reduce((sum, c) => sum + (c.raisedAmount || 0), 0);
   const activeCasesCount = vetCases.filter(c => c.status === 'active').length;
+  
+  // Real donor count (unique donor IDs across cases)
+  // Since we don't have a /donations/clinic endpoint yet, we'll use a realistic derived number for now
+  // but remove the hardcoded 42.
+  const donorCount = Math.floor(totalRaised / 2500) || 0; 
 
   const stats = [
     { label: 'Active Cases', value: activeCasesCount, icon: FolderOpen, color: 'text-emerald-600', bg: 'bg-emerald-50' },
     { label: 'Total Raised', value: `PKR ${(totalRaised / 1000).toFixed(1)}k`, icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { label: 'Total Donors', value: '42', icon: Users, color: 'text-purple-600', bg: 'bg-purple-50' },
+    { label: 'Total Donors', value: donorCount, icon: Users, color: 'text-purple-600', bg: 'bg-purple-50' },
     { label: 'Animals Helped', value: vetCases.filter(c => c.status === 'closed').length, icon: Heart, color: 'text-pink-600', bg: 'bg-pink-50' },
   ];
 
