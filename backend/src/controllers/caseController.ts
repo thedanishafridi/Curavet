@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import Case from '../models/Case.js'
+import User from '../models/User.js'
 import { AuthRequest } from '../middleware/auth.js'
 
 export const getCases = async (req: Request, res: Response) => {
@@ -26,6 +27,11 @@ export const getMyCases = async (req: AuthRequest, res: Response) => {
 export const createCase = async (req: AuthRequest, res: Response) => {
   if (!req.user) {
     return res.status(401).json({ message: 'Unauthorized' })
+  }
+
+  const user = await User.findById(req.user.id);
+  if (!user || (user.role === 'vet' && !user.isApproved)) {
+    return res.status(403).json({ message: 'Account pending verification' });
   }
 
   const { 
