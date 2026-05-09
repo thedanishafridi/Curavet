@@ -44,3 +44,21 @@ export const createDonation = async (req: AuthRequest, res: Response) => {
   await existingCase.save()
   res.status(201).json(donation)
 }
+
+export const getVetDonations = async (req: AuthRequest, res: Response) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+  
+  // Find all cases owned by this vet
+  const myCases = await Case.find({ ownerId: req.user.id }).select('_id')
+  const caseIds = myCases.map(c => c._id)
+  
+  // Find all donations for these cases
+  const donations = await Donation.find({ caseId: { $in: caseIds } })
+    .populate('caseId', 'title')
+    .populate('donorId', 'name email')
+    .sort({ createdAt: -1 })
+    
+  res.json(donations)
+}

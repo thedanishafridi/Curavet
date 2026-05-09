@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express'
-import { getDonations, getMyDonations, getDonationsByCase, createDonation } from '../controllers/donationController.js'
+import { getDonations, getMyDonations, getDonationsByCase, createDonation, getVetDonations } from '../controllers/donationController.js'
 import { requireAuth } from '../middleware/auth.js'
 import { Server } from 'socket.io'
 import { validate, donationSchema } from '../middleware/validation.js'
@@ -18,6 +18,9 @@ router.get('/', getDonations)
 
 // GET /api/donations/my — logged-in user's donation history
 router.get('/my', requireAuth, getMyDonations)
+
+// GET /api/donations/vet — donations for cases owned by the current vet
+router.get('/vet', requireAuth, getVetDonations)
 
 // GET /api/donations/case/:caseId — donations for a specific case
 router.get('/case/:caseId', getDonationsByCase)
