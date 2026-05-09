@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         name: data.name,
         email: data.email,
         role: data.role,
-        isApproved: true, // Assume approved for now
+        isApproved: data.role === 'admin' ? true : !!data.isApproved,
       });
     } catch (error) {
       console.error('Failed to authenticate:', error);
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name: data.user.name,
       email: data.user.email,
       role: data.user.role,
-      isApproved: true,
+      isApproved: data.user.role === 'admin' ? true : !!data.user.isApproved,
     };
     setUser(userData);
     return userData;
@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name: data.user.name,
       email: data.user.email,
       role: data.user.role,
-      isApproved: true,
+      isApproved: data.user.role === 'admin' ? true : !!data.user.isApproved,
     };
     setUser(newUser);
     return newUser;

@@ -28,7 +28,7 @@ export const registerUser = async (req: Request, res: Response) => {
     user: { 
       ...userObj,
       id: user._id.toString(),
-      verified: true
+      isApproved: userObj.isApproved || false
     } 
   })
 }
@@ -65,7 +65,7 @@ export const loginUser = async (req: Request, res: Response) => {
     user: { 
       ...userObj,
       id: user._id.toString(),
-      verified: true
+      isApproved: userObj.isApproved || false
     } 
   })
 }
