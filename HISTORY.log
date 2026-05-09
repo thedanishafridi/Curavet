@@ -1,0 +1,35 @@
+[2026-05-08T00:00:00Z] | INITIALIZED | /Curavet | Created project-specific HISTORY.log for CuraVet local rebuild.
+[2026-05-08T00:00:00Z] | SCAFFOLDED | /Curavet | Added local backend and frontend foundation for CuraVet rebuild.
+[2026-05-09T00:00:00Z] | IN PROGRESS | /Curavet | Started vet dashboard and create-case flow validation; checking frontend startup and route behavior.
+[2026-05-09T00:00:00Z] | VERIFIED | /Curavet | Frontend started on http://localhost:5173 and backend API is responding on http://localhost:5001.
+[2026-05-09T00:00:00Z] | VERIFIED | /Curavet | Seeded vet login works (vet@curavet.com / vet123) and protected /api/cases/my returns existing vet-owned cases.
+[2026-05-09T00:00:00Z] | VERIFIED | /Curavet | Protected POST /api/cases is functional for a logged-in vet and creates new vet-owned cases.
+[2026-05-09T00:00:00Z] | VERIFIED | /Curavet | Admin dashboard route placeholder created and recovery workflow integration started.
+[2026-05-09T00:00:00Z] | PENDING | /Curavet | Closing session for now; next work will resume vet UI end-to-end testing and admin/recovery routes.
+[2026-05-09T12:00:00Z] | COMPLETED | /Curavet | Implemented admin approval workflow with backend and frontend integration.
+[2026-05-09T12:00:00Z] | ADDED | /Curavet/backend | Added admin controller with overview, pending recoveries, all cases, and all users endpoints.
+[2026-05-09T12:00:00Z] | ADDED | /Curavet/backend | Extended recovery controller with getPendingRecoveryRequests, approveRecoveryRequest, rejectRecoveryRequest.
+[2026-05-09T12:00:00Z] | ADDED | /Curavet/backend | Extended case controller with getAdminCases and updateCaseStatus endpoints.
+[2026-05-09T12:00:00Z] | ADDED | /Curavet/backend | Added /api/recovery/admin/pending, /api/recovery/:id/approve, /api/recovery/:id/reject routes.
+[2026-05-09T12:00:00Z] | ADDED | /Curavet/backend | Added /api/cases/admin/all and /api/cases/:id/status routes for admin case management.
+[2026-05-09T12:00:00Z] | ADDED | /Curavet/backend | Added /api/admin/recoveries/pending, /api/admin/cases/all, /api/admin/users/all routes.
+[2026-05-09T12:00:00Z] | ADDED | /Curavet/frontend | Created AdminRecoveryApprovals page for reviewing and approving pending recovery requests.
+[2026-05-09T12:00:00Z] | ADDED | /Curavet/frontend | Created AdminCaseManagement page for viewing and updating case statuses.
+[2026-05-09T12:00:00Z] | ADDED | /Curavet/frontend | Created AdminUserManagement page with role-based filtering for users.
+[2026-05-09T12:00:00Z] | UPDATED | /Curavet/frontend | Updated AdminDashboard to link to recovery approvals, case management, and user management pages.
+[2026-05-09T12:00:00Z] | VERIFIED | /Curavet | Backend TypeScript compilation successful for all new admin endpoints.
+[2026-05-09T12:00:00Z] | VERIFIED | /Curavet | Frontend TypeScript compilation successful for all admin pages; no errors in routes or components.
+[2026-05-09T12:00:00Z] | TESTED | /Curavet | All admin API endpoints tested and verified working: overview, recovery approvals, case list, user list.
+[2026-05-09T12:00:00Z] | VERIFIED | /Curavet | Admin metrics show: 3 users (1 admin, 1 vet, 1 donor), 4 cases (all open), 0 pending recoveries.
+[2026-05-09T12:30:00Z] | COMPLETED | /Curavet | Implemented vet application workflow for clinic onboarding.
+[2026-05-09T12:30:00Z] | ADDED | /Curavet/backend | Created VetApplication model with fields for clinic name, license, and approval status.
+[2026-05-09T12:30:00Z] | ADDED | /Curavet/backend | Created vet application controller with methods for submit, approve, reject, and status check.
+[2026-05-09T12:30:00Z] | ADDED | /Curavet/backend | Added /api/vet-applications routes for submission, admin review, and approval.
+[2026-05-09T12:30:00Z] | ADDED | /Curavet/frontend | Created AdminVetApplications page for admin to review and approve pending vet applications.
+[2026-05-09T12:30:00Z] | ADDED | /Curavet/frontend | Created VetApplicationForm page for donors to apply as veterinarians.
+[2026-05-09T12:30:00Z] | UPDATED | /Curavet/backend | Updated admin overview controller to include pending vet applications count.
+[2026-05-09T12:30:00Z] | UPDATED | /Curavet/frontend | Updated AdminDashboard with vet applications link and pending count metric.
+[2026-05-09T12:30:00Z] | VERIFIED | /Curavet | Backend TypeScript compilation successful with new VetApplication model and routes.
+[2026-05-09T12:30:00Z] | VERIFIED | /Curavet | Frontend TypeScript compilation successful for admin vet applications and form pages.
+[2026-05-09T12:30:00Z] | TESTED | /Curavet | Complete vet application workflow tested: donor submit, admin review, approval process successful.
+[2026-05-09T12:30:00Z] | VERIFIED | /Curavet | Admin can approve vet applications and user role is automatically updated from donor to vet.

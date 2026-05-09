@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/(api|uploads)/:path*",
+      "destination": "https://curavet-backend.onrender.com/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

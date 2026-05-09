@@ -1,0 +1,122 @@
+import { Request, Response } from 'express'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import User from '../models/User.js'
+import { sendEmail } from '../services/mailer.js'
+
+const jwtSecret = process.env.JWT_SECRET ?? 'curavet_local_secret'
+
+export const registerUser = async (req: Request, res: Response) => {
+  const { name, email, password, role } = req.body
+  if (!name || !email || !password) {
+    return res.status(400).json({ message: 'Name, email, and password are required' })
+  }
+  const existing = await User.findOne({ email })
+  if (existing) {
+    return res.status(409).json({ message: 'Email already registered' })
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10)
+  const user = await User.create({ name, email, passwordHash, role: role ?? 'donor' })
+  const token = jwt.sign({ id: user._id.toString(), role: user.role }, jwtSecret, { expiresIn: '7d' })
+  res.status(201).json({ 
+    token, 
+    user: { 
+      id: user._id.toString(), 
+      name: user.name, 
+      email: user.email, 
+      role: user.role,
+      verified: true
+    } 
+  })
+}
+
+export const loginUser = async (req: Request, res: Response) => {
+  const { email, password } = req.body
+  console.log(`[AUTH] Login attempt: ${email}`)
+  
+  if (!email || !password) {
+    console.warn(`[AUTH] Missing email or password`)
+    return res.status(400).json({ message: 'Email and password are required' })
+  }
+  
+  const user = await User.findOne({ email })
+  if (!user) {
+    console.warn(`[AUTH] User not found: ${email}`)
+    return res.status(401).json({ message: 'Invalid credentials' })
+  }
+
+  const valid = await bcrypt.compare(password, user.passwordHash)
+  if (!valid) {
+    console.warn(`[AUTH] Invalid password for: ${email}`)
+    return res.status(401).json({ message: 'Invalid credentials' })
+  }
+
+  console.log(`[AUTH] Login successful: ${email} (${user.role})`)
+  const token = jwt.sign({ id: user._id.toString(), role: user.role }, jwtSecret, { expiresIn: '7d' })
+  res.json({ 
+    token, 
+    user: { 
+      id: user._id.toString(), 
+      name: user.name, 
+      email: user.email, 
+      role: user.role,
+      verified: true // Default to true for now to allow login
+    } 
+  })
+}
+
+export const getCurrentUser = async (req: Request, res: Response) => {
+  const authReq = req as unknown as { user?: { id: string } }
+  if (!authReq.user?.id) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+  const user = await User.findById(authReq.user.id).select('-passwordHash')
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' })
+  }
+  res.json(user)
+}
+
+export const changePassword = async (req: Request, res: Response) => {
+  const authReq = req as unknown as { user?: { id: string } }
+  if (!authReq.user?.id) {
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
+  const { currentPassword, newPassword } = req.body
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Current and new passwords are required' })
+  }
+  if (newPassword.length < 8) {
+    return res.status(400).json({ message: 'New password must be at least 8 characters' })
+  }
+  const user = await User.findById(authReq.user.id)
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' })
+  }
+  const valid = await bcrypt.compare(currentPassword, user.passwordHash)
+  if (!valid) {
+    return res.status(401).json({ message: 'Current password is incorrect' })
+  }
+  user.passwordHash = await bcrypt.hash(newPassword, 10)
+  await user.save()
+  res.json({ message: 'Password changed successfully' })
+}
+
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  const { email } = req.body
+  const user = await User.findOne({ email })
+  // Return success even if not found for security
+  if (!user) {
+    return res.json({ message: 'If an account exists with that email, a reset link has been sent' })
+  }
+  
+  await sendEmail(
+    email, 
+    'Password Reset Request', 
+    `Hello ${user.name}, we received a request to reset your password. Please use the app to set a new one.`
+  )
+  
+  res.json({ message: 'If an account exists with that email, a reset link has been sent' })
+}
