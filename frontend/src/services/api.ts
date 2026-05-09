@@ -25,8 +25,9 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      // Optionally redirect to login page here if needed
-      if (window.location.pathname !== '/login' && window.location.pathname !== '/vet/login' && window.location.pathname !== '/') {
+      // Only redirect if NOT on a login/auth page
+      const authPages = ['/login', '/vet/login', '/admin/login', '/signup', '/vet/signup'];
+      if (!authPages.includes(window.location.pathname) && window.location.pathname !== '/') {
          window.location.href = '/login';
       }
     }

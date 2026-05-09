@@ -33,3 +33,10 @@
 [2026-05-09T12:30:00Z] | VERIFIED | /Curavet | Frontend TypeScript compilation successful for admin vet applications and form pages.
 [2026-05-09T12:30:00Z] | TESTED | /Curavet | Complete vet application workflow tested: donor submit, admin review, approval process successful.
 [2026-05-09T12:30:00Z] | VERIFIED | /Curavet | Admin can approve vet applications and user role is automatically updated from donor to vet.
+[2026-05-09T14:45:00Z] | FIXED | /Curavet/frontend | Corrected Case Upload validation errors display (removed [object Object]).
+[2026-05-09T14:45:00Z] | UPDATED | /Curavet/backend | Expanded Case model and Zod validation to match all frontend form fields.
+[2026-05-09T14:45:00Z] | UPDATED | /Curavet/backend | Updated register validation to support additional vet registration fields.
+[2026-05-09T14:45:00Z] | UPDATED | /Curavet/backend | Added multiple admin users (admin2, admin3) to the seeder script.
+[2026-05-09T14:50:00Z] | FIXED | /Curavet/frontend | Hardened AdminLogin to enforce 'admin' role and prevent Vets from accessing the admin portal.
+[2026-05-09T14:50:00Z] | FIXED | /Curavet/frontend | Modified api.ts interceptor to prevent accidental redirects to /login on failed login attempts.
+[2026-05-09T14:50:00Z] | VERIFIED | /Curavet | Admin credentials (admin@curavet.com / admin123) verified via internal test script.

@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Shield, Eye, EyeOff, Lock, Mail, AlertTriangle } from 'lucide-react';
 
 export function AdminLogin() {
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
@@ -19,13 +19,14 @@ export function AdminLogin() {
       const user = await login({ email: form.email, password: form.password });
       if (user.role === 'admin') {
         navigate('/admin/dashboard');
-      } else if (user.role === 'vet' || user.role === 'clinic') {
-        navigate('/vet/dashboard');
       } else {
-        navigate('/browse');
+        // If not an admin, log them out immediately and show error
+        logout();
+        setError('Access Denied: You do not have administrator privileges.');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid credentials.');
+      console.error('[ADMIN_LOGIN_ERROR]', err);
+      setError(err.response?.data?.message || 'Invalid admin credentials.');
     } finally {
       setLoading(false);
     }
