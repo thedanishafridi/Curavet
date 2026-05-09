@@ -1,6 +1,6 @@
+import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
-import dotenv from 'dotenv'
 import path from 'path'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
@@ -14,8 +14,6 @@ import vetApplicationRouter from './routes/vetApplication.js'
 import uploadRouter from './routes/upload.js'
 import connectDB from './config/db.js'
 import { errorHandler } from './middleware/errorHandler.js'
-
-dotenv.config()
 
 const app = express()
 const port = Number(process.env.PORT ?? 5001)
