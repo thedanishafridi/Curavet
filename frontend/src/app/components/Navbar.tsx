@@ -2,6 +2,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Menu, X, Bell, ChevronDown, LogOut, User as UserIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import api from '../../services/api';
 
 export function Navbar() {
   const { isLoggedIn, user, role, logout } = useAuth();
@@ -18,8 +19,8 @@ export function Navbar() {
   useEffect(() => {
     if (role === 'donor') {
       api.get('/donations/my')
-        .then(res => setActiveDonations(res.data?.length || 0))
-        .catch(err => console.error('Failed to fetch donations for badge', err));
+        .then((res: any) => setActiveDonations(res.data?.length || 0))
+        .catch((err: any) => console.error('Failed to fetch donations for badge', err));
     }
   }, [role]);
 
