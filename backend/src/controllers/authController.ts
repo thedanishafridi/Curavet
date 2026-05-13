@@ -2,18 +2,26 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
+import VetApplication from '../models/VetApplication.js'
 import { sendEmail } from '../services/mailer.js'
 
 const jwtSecret = process.env.JWT_SECRET ?? 'curavet_local_secret'
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password, role, ...extra } = req.body
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: 'Name, email, and password are required' })
+  const errors: Record<string, string> = {}
+  
+  if (!name) errors.full_name = 'Name is required'
+  if (!email) errors.email = 'Email is required'
+  if (!password) errors.password = 'Password is required'
+  
+  if (Object.keys(errors).length > 0) {
+    return res.status(400).json({ message: 'Validation failed', errors })
   }
+
   const existing = await User.findOne({ email })
   if (existing) {
-    return res.status(409).json({ message: 'Email already registered' })
+    return res.status(409).json({ message: 'Validation failed', errors: { email: 'Email already registered' } })
   }
 
   const passwordHash = await bcrypt.hash(password, 10)
@@ -52,6 +60,14 @@ export const loginUser = async (req: Request, res: Response) => {
   if (!valid) {
     console.warn(`[AUTH] Invalid password for: ${email}`)
     return res.status(401).json({ message: 'Invalid credentials' })
+  }
+
+  if (user.role === 'vet' && !user.isApproved) {
+    const application = await VetApplication.findOne({ vetId: user._id }).sort({ createdAt: -1 });
+    if (application?.status === 'rejected') {
+        return res.status(403).json({ message: `Your application was rejected: ${application.rejectionReason}` });
+    }
+    return res.status(403).json({ message: 'Your account is pending admin approval.' });
   }
 
   console.log(`[AUTH] Login successful: ${email} (${user.role})`)

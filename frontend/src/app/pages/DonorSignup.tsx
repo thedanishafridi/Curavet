@@ -49,7 +49,12 @@ export function DonorSignup() {
       navigate('/browse');
     } catch (err: any) {
       const msg = err.response?.data?.message || err.message || 'Failed to create account.';
-      setErrors({ api: msg });
+      const apiErrors = err.response?.data?.errors;
+      if (apiErrors) {
+        setErrors(apiErrors);
+      } else {
+        setErrors({ api: msg });
+      }
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -126,6 +131,8 @@ export function DonorSignup() {
                 <input
                   type="text"
                   name="full_name"
+                  autoComplete="name"
+                  data-lpignore="true"
                   value={form.full_name}
                   onChange={(e) => setForm({ ...form, full_name: e.target.value })}
                   placeholder="Ahmed Malik"

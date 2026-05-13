@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import VetApplication from '../models/VetApplication.js'
 import User from '../models/User.js'
 import { AuthRequest } from '../middleware/auth.js'
+import { sendEmail } from '../services/mailer.js'
 
 export const getPendingApplications = async (req: Request, res: Response) => {
   const applications = await VetApplication.find({ status: 'pending' })
@@ -53,11 +54,18 @@ export const approveVetApplication = async (req: AuthRequest, res: Response) => 
   application.status = 'approved'
   await application.save()
 
-  // Update user role to vet
+  // Update user role to vet and set isApproved to true
   const user = await User.findById(application.vetId)
   if (user) {
     user.role = 'vet'
+    user.isApproved = true
     await user.save()
+
+    await sendEmail(
+      user.email,
+      'CuraVet Clinic Application Approved',
+      `Hello ${user.name},\n\nYour clinic application for ${application.clinicName} has been approved! You can now log in to the CuraVet platform.\n\nThank you,\nThe CuraVet Team`
+    )
   }
 
   res.json(application)
@@ -74,6 +82,15 @@ export const rejectVetApplication = async (req: AuthRequest, res: Response) => {
   application.status = 'rejected'
   application.rejectionReason = reason || 'No reason provided'
   await application.save()
+
+  const user = await User.findById(application.vetId)
+  if (user) {
+    await sendEmail(
+      user.email,
+      'CuraVet Clinic Application Update',
+      `Hello ${user.name},\n\nUnfortunately, your clinic application for ${application.clinicName} was not approved. \n\nReason: ${application.rejectionReason}\n\nIf you have any questions, please reply to this email.\n\nThank you,\nThe CuraVet Team`
+    )
+  }
 
   res.json(application)
 }

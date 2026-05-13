@@ -78,7 +78,7 @@ function FileUploadBox({ label, fieldName, file, onFileChange, description }: Fi
 const CITIES = ['Karachi', 'Lahore', 'Islamabad', 'Rawalpindi', 'Faisalabad', 'Multan', 'Peshawar', 'Quetta'];
 
 export function VetSignup() {
-  const { register } = useAuth();
+  const { register, logout } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     clinicName: '',
@@ -143,10 +143,15 @@ export function VetSignup() {
         documents: [licenseUrl, regCertUrl].filter(Boolean)
       });
       
+      logout();
       setSubmitted(true);
       toast.success('Clinic application submitted!');
     } catch (err: any) {
-      const msg = err.response?.data?.message || err.message || 'Failed to submit application.';
+      let msg = err.response?.data?.message || err.message || 'Failed to submit application.';
+      const apiErrors = err.response?.data?.errors;
+      if (apiErrors) {
+        msg = Object.values(apiErrors).join(', ');
+      }
       setError(msg);
       toast.error(msg);
     } finally {
@@ -285,6 +290,8 @@ export function VetSignup() {
                     <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-600 transition-colors" />
                     <input
                       type="text"
+                      autoComplete="name"
+                      data-lpignore="true"
                       value={form.vetName}
                       onChange={(e) => setForm({ ...form, vetName: e.target.value })}
                       placeholder="Dr. Ahmed Malik"

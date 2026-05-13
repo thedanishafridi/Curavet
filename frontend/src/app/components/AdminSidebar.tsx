@@ -4,7 +4,8 @@ import {
   LayoutDashboard, FolderOpen, ClipboardList, UserCircle, LogOut,
   PlusCircle, Upload, Menu, X, Users
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import api from '../../services/api';
 
 interface SidebarProps {
   role?: 'admin' | 'vet';
@@ -15,6 +16,15 @@ export function AdminSidebar({ role = 'admin' }: SidebarProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [openCases, setOpenCases] = useState(0);
+
+  useEffect(() => {
+    if (role === 'admin') {
+      api.get('/admin/overview')
+        .then(res => setOpenCases(res.data.openCases || 0))
+        .catch(err => console.error('Failed to fetch sidebar stats:', err));
+    }
+  }, [role]);
 
   const handleLogout = () => {
     logout();
@@ -87,14 +97,21 @@ export function AdminSidebar({ role = 'admin' }: SidebarProps) {
           <Link
             key={to}
             to={to}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm font-medium ${
+            className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition-all text-sm font-medium ${
               isActive(to)
                 ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/30'
                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
             }`}
           >
-            <Icon size={18} className="flex-shrink-0" />
-            {!collapsed && <span>{label}</span>}
+            <div className="flex items-center gap-3">
+              <Icon size={18} className="flex-shrink-0" />
+              {!collapsed && <span>{label}</span>}
+            </div>
+            {!collapsed && to === '/admin/case-management' && openCases > 0 && (
+              <span className="bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                {openCases}
+              </span>
+            )}
           </Link>
         ))}
       </nav>

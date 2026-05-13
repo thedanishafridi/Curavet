@@ -53,3 +53,5 @@
 [2026-05-09T20:50:00Z] | BRANCHED | /Curavet | Created 'security-audit-fixes' branch and pushed all architectural zero-defect remediations to git.
 [2026-05-09T21:05:00Z] | FIXED | /Curavet/backend | Synchronized updateCaseStatus with Case schema to allow 'active' and 'pending' statuses, resolving Admin Dashboard update errors.
 [2026-05-09T21:15:00Z] | FIXED | /Curavet | Standardized case list responses to { cases: [] } format and updated Vet pages to use the authenticated /api/cases/my endpoint.
+[2026-05-09T21:20:00Z] | ADDED | /Curavet/backend | Created /api/donations/vet endpoint to aggregate donations for a specific veterinarian's clinic.
+[2026-05-09T21:20:00Z] | FIXED | /Curavet/frontend | Replaced hardcoded stats in VetDashboard with real data calculations for Total Raised, Donors, and Active Cases.

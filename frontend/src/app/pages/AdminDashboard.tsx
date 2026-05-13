@@ -33,7 +33,7 @@ export function AdminDashboard() {
   const fetchDashboardData = async () => {
     try {
       const [statsRes, appsRes, casesRes] = await Promise.all([
-        api.get('/admin/stats'),
+        api.get('/admin/overview'),
         api.get('/admin/vet-applications'),
         api.get('/cases')
       ]);
@@ -78,7 +78,7 @@ export function AdminDashboard() {
 
   const stats = [
     { label: 'Pending Vets', value: pendingApps.length, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200', change: '+2 today' },
-    { label: 'Active Cases', value: (cases || []).filter(c => c.status === 'active').length, icon: FolderOpen, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', change: '+1 today' },
+    { label: 'Active Cases', value: adminStats?.openCases || 0, icon: FolderOpen, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', change: '+1 today' },
     { label: 'Total Users', value: (adminStats?.totalUsers || 0).toLocaleString(), icon: Users, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', change: '+47 this week' },
     { label: 'PKR Revenue', value: `${((adminStats?.totalFunds || 0) / 100000).toFixed(1)}L`, icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200', change: '+12% this month' },
   ];

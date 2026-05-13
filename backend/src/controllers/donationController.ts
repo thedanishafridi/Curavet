@@ -1,7 +1,9 @@
 import { Request, Response } from 'express'
 import Donation from '../models/Donation.js'
 import Case from '../models/Case.js'
+import User from '../models/User.js'
 import { AuthRequest } from '../middleware/auth.js'
+import { sendEmail } from '../services/mailer.js'
 
 export const getDonations = async (req: Request, res: Response) => {
   const donations = await Donation.find().sort({ createdAt: -1 })
@@ -42,6 +44,16 @@ export const createDonation = async (req: AuthRequest, res: Response) => {
     existingCase.status = 'closed'
   }
   await existingCase.save()
+  
+  const user = await User.findById(req.user.id)
+  if (user) {
+    await sendEmail(
+      user.email,
+      'CuraVet Donation Receipt',
+      `Hello ${user.name},\n\nThank you for your generous donation of PKR ${amount} to the case "${existingCase.petName || existingCase.title}".\n\nYour support helps save animal lives.\n\nWarm regards,\nThe CuraVet Team`
+    )
+  }
+
   res.status(201).json(donation)
 }
 

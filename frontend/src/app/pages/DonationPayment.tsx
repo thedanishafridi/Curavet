@@ -11,6 +11,10 @@ function formatCardNumber(val: string) {
 
 function formatExpiry(val: string) {
   const digits = val.replace(/\D/g, '').slice(0, 4);
+  if (digits.length >= 2) {
+    const month = parseInt(digits.slice(0, 2), 10);
+    if (month < 1 || month > 12) return digits.slice(0, 1);
+  }
   if (digits.length >= 3) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
   return digits;
 }
@@ -183,6 +187,8 @@ export function DonationPayment() {
               </label>
               <input
                 type="text"
+                autoComplete="cc-name"
+                data-lpignore="true"
                 value={form.card_name}
                 onChange={(e) => setForm({ ...form, card_name: e.target.value })}
                 placeholder="AHMED MALIK"
@@ -220,7 +226,7 @@ export function DonationPayment() {
                     type="password"
                     name="cvv"
                     value={form.cvv}
-                    onChange={(e) => setForm({ ...form, cvv: e.target.value.slice(0, 4) })}
+                    onChange={(e) => setForm({ ...form, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) })}
                     placeholder="•••"
                     required
                     maxLength={4}
