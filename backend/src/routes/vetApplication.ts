@@ -14,7 +14,7 @@ const router = Router()
 router.get('/admin/pending', requireAuth, requireRole('admin'), getPendingApplications)
 router.get('/admin/all', requireAuth, requireRole('admin'), getAllApplications)
 router.get('/my', requireAuth, getMyApplication)
-router.post('/', requireAuth, submitVetApplication)
+router.post('/', submitVetApplication)
 router.post('/:id/approve', requireAuth, requireRole('admin'), approveVetApplication)
 router.post('/:id/reject', requireAuth, requireRole('admin'), rejectVetApplication)
 

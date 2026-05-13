@@ -11,8 +11,17 @@ export function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [activeDonations, setActiveDonations] = useState(0);
 
   const isActive = (path: string) => location.pathname === path;
+
+  useEffect(() => {
+    if (role === 'donor') {
+      api.get('/donations/my')
+        .then(res => setActiveDonations(res.data?.length || 0))
+        .catch(err => console.error('Failed to fetch donations for badge', err));
+    }
+  }, [role]);
 
   useEffect(() => {
     const handleScrollClose = () => {
@@ -110,12 +119,15 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 rounded-full px-3 py-1.5 transition-colors"
+                  className="flex items-center gap-2 bg-gray-50 hover:bg-gray-100 rounded-full px-3 py-1.5 transition-colors relative"
                 >
                   <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center overflow-hidden">
                     <span className="text-emerald-700 font-bold text-sm">{user?.name?.charAt(0) || 'U'}</span>
                   </div>
                   <span className="text-sm font-medium text-gray-700">{(user?.name || 'User').split(' ')[0]}</span>
+                  {role === 'donor' && activeDonations > 0 && (
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-sm"></div>
+                  )}
                   <ChevronDown size={14} className="text-gray-500" />
                 </button>
                 {dropdownOpen && (

@@ -17,12 +17,23 @@ export function AdminSidebar({ role = 'admin' }: SidebarProps) {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [openCases, setOpenCases] = useState(0);
+  const [pendingApps, setPendingApps] = useState(0);
 
   useEffect(() => {
     if (role === 'admin') {
       api.get('/admin/overview')
-        .then(res => setOpenCases(res.data.openCases || 0))
+        .then(res => {
+          setOpenCases(res.data.openCases || 0);
+          setPendingApps(res.data.pendingVetApplications || 0);
+        })
         .catch(err => console.error('Failed to fetch sidebar stats:', err));
+    } else if (role === 'vet') {
+      api.get('/cases/my')
+        .then(res => {
+          const active = (res.data.cases || []).filter((c: any) => c.status === 'active' || c.status === 'open').length;
+          setOpenCases(active);
+        })
+        .catch(err => console.error('Failed to fetch sidebar cases:', err));
     }
   }, [role]);
 
@@ -70,9 +81,11 @@ export function AdminSidebar({ role = 'admin' }: SidebarProps) {
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 hover:bg-gray-700 rounded-lg transition-colors ml-auto"
+          className={`p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors ${
+            collapsed ? 'mx-auto' : ''
+          }`}
         >
-          {collapsed ? <Menu size={18} /> : <X size={18} />}
+          {collapsed ? <Menu size={20} /> : <X size={20} />}
         </button>
       </div>
 
@@ -108,6 +121,16 @@ export function AdminSidebar({ role = 'admin' }: SidebarProps) {
               {!collapsed && <span>{label}</span>}
             </div>
             {!collapsed && to === '/admin/case-management' && openCases > 0 && (
+              <span className="bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                {openCases}
+              </span>
+            )}
+            {!collapsed && to === '/admin/vet-applications' && pendingApps > 0 && (
+              <span className="bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
+                {pendingApps}
+              </span>
+            )}
+            {!collapsed && to === '/vet/dashboard' && openCases > 0 && (
               <span className="bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">
                 {openCases}
               </span>

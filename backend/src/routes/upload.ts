@@ -56,4 +56,15 @@ router.post('/', requireAuth, upload.array('images', 5), (req: Request, res: Res
   res.status(201).json({ urls })
 })
 
+router.post('/public', upload.array('images', 5), (req: Request, res: Response) => {
+  const files = req.files as any[]
+  if (!files || files.length === 0) {
+    return res.status(400).json({ message: 'No files uploaded' })
+  }
+
+  const urls = files.map(f => f.path || f.secure_url || `${req.protocol}://${req.get('host')}/uploads/${f.filename}`)
+  
+  res.status(201).json({ urls })
+})
+
 export default router

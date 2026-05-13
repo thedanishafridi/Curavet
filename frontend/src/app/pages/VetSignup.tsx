@@ -100,26 +100,14 @@ export function VetSignup() {
     setLoading(true);
     setError('');
     try {
-      // 1. Register the user with all metadata
-      await register({
-        name: form.vetName,
-        email: form.email,
-        password: form.password,
-        role: 'vet',
-        clinicName: form.clinicName,
-        clinicAddress: form.city,
-        licenseNumber: form.licenseNumber,
-        phone: form.phone
-      });
-
-      // 2. Upload documents if selected
+      // 1. Upload documents if selected
       let licenseUrl = '';
       let regCertUrl = '';
 
       if (licenseDoc) {
         const formData = new FormData();
         formData.append('images', licenseDoc);
-        const res = await api.post('/upload', formData, {
+        const res = await api.post('/upload/public', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         if (res.data.urls?.length) licenseUrl = res.data.urls[0];
@@ -128,22 +116,23 @@ export function VetSignup() {
       if (regCert) {
         const formData = new FormData();
         formData.append('images', regCert);
-        const res = await api.post('/upload', formData, {
+        const res = await api.post('/upload/public', formData, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
         if (res.data.urls?.length) regCertUrl = res.data.urls[0];
       }
 
-      // 3. Submit application details for admin review
+      // 2. Submit application details for admin review
       await api.post('/vet-applications', {
+        name: form.vetName,
+        email: form.email,
+        password: form.password,
         clinicName: form.clinicName,
         clinicAddress: form.city,
         licenseNumber: form.licenseNumber,
         phoneNumber: form.phone,
         documents: [licenseUrl, regCertUrl].filter(Boolean)
       });
-      
-      logout();
       setSubmitted(true);
       toast.success('Clinic application submitted!');
     } catch (err: any) {
