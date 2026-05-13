@@ -34,7 +34,7 @@ export function AdminDashboard() {
     try {
       const [statsRes, appsRes, casesRes] = await Promise.all([
         api.get('/admin/overview'),
-        api.get('/admin/vet-applications'),
+        api.get('/vet-applications/admin/all'),
         api.get('/cases')
       ]);
       setAdminStats(statsRes.data || {});
@@ -56,7 +56,7 @@ export function AdminDashboard() {
 
   const handleApprove = async (id: string) => {
     try {
-      await api.put(`/admin/vet-applications/${id}/approve`);
+      await api.post(`/vet-applications/${id}/approve`);
       toast.success('Vet application approved');
       fetchDashboardData();
     } catch (err) {
@@ -67,7 +67,7 @@ export function AdminDashboard() {
 
   const handleReject = async (id: string) => {
     try {
-      await api.put(`/admin/vet-applications/${id}/reject`, { reason: 'Application does not meet criteria' });
+      await api.post(`/vet-applications/${id}/reject`, { reason: 'Application does not meet criteria' });
       toast.success('Vet application rejected');
       fetchDashboardData();
     } catch (err) {

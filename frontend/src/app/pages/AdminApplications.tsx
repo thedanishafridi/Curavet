@@ -13,7 +13,7 @@ export function AdminApplications() {
 
   const fetchApplications = async () => {
     try {
-      const { data } = await api.get('/admin/vet-applications');
+      const { data } = await api.get('/vet-applications/admin/all');
       setApplications(data || []);
     } catch (error) {
       console.error('Error fetching applications:', error);
@@ -43,7 +43,7 @@ export function AdminApplications() {
 
   const handleApprove = async (id: string) => {
     try {
-      await api.put(`/admin/vet-applications/${id}/approve`);
+      await api.post(`/vet-applications/${id}/approve`);
       toast.success('Vet credentialed successfully');
       fetchApplications();
     } catch (err) {
@@ -54,7 +54,7 @@ export function AdminApplications() {
 
   const handleReject = async (id: string) => {
     try {
-      await api.put(`/admin/vet-applications/${id}/reject`, { reason: 'Credentials verification failed' });
+      await api.post(`/vet-applications/${id}/reject`, { reason: 'Credentials verification failed' });
       toast.success('Application rejected');
       fetchApplications();
     } catch (err) {
